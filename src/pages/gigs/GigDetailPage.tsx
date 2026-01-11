@@ -5,11 +5,10 @@ import { getGigById } from "@/features/gigSlice";
 import { createBid, getGigBids, resetBids } from "@/features/bidSlice";
 import type { AppDispatch, RootState } from "@/store";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import AuthInput from "@/components/auth/AuthInput";
-import { ArrowLeft, DollarSign, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 
 const GigDetailPage = () => {
   const { id } = useParams();
@@ -25,13 +24,36 @@ const GigDetailPage = () => {
 
   const { user } = useSelector((state: RootState) => state.auth);
   const {
+    bids,
     isLoading: bidLoading,
     isSuccess: bidSuccess,
     isError: bidError,
     message: bidMessage,
   } = useSelector((state: RootState) => state.bids);
 
-  const { bids } = useSelector((state: RootState) => state.bids);
+  const formik = useFormik({
+    initialValues: {
+      message: "",
+      price: "",
+    },
+    validationSchema: Yup.object({
+      message: Yup.string().required("Proposal message is required"),
+      price: Yup.number()
+        .required("Bid amount is required")
+        .positive("Must be positive"),
+    }),
+    onSubmit: (values) => {
+      if (id) {
+        dispatch(
+          createBid({
+            gigId: id,
+            message: values.message,
+            price: Number(values.price),
+          })
+        );
+      }
+    },
+  });
 
   useEffect(() => {
     if (id) {
@@ -43,11 +65,33 @@ const GigDetailPage = () => {
     };
   }, [dispatch, id]);
 
-  // ... (keep second useEffect)
+  useEffect(() => {
+    if (bidSuccess) {
+      formik.resetForm();
+      if (id) {
+        dispatch(getGigById(id));
+        dispatch(getGigBids(id));
+      }
+    }
+  }, [bidSuccess, id, dispatch]); // Removed formik from deps to avoid infinite loop if formik changes, though formik ref is usually stable. Better safest to exclude or verify.
 
-  // ... (keep formik)
+  if (gigLoading) {
+    return <div className="text-center py-12">Loading gig details...</div>;
+  }
 
-  // ... (keep loading/error checks)
+  if (gigError || !currentGig) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <h2 className="text-xl font-bold text-destructive">
+          Error loading gig
+        </h2>
+        <p className="text-muted-foreground">{gigMessage || "Gig not found"}</p>
+        <Button variant="outline" className="mt-4" asChild>
+          <Link to="/gigs">Back to Gigs</Link>
+        </Button>
+      </div>
+    );
+  }
 
   const isOwner = user?._id === currentGig.ownerId._id;
   const hasAlreadyBid = bids.some(
