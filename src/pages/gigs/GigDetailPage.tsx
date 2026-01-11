@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { getGigById } from "@/features/gigSlice";
-import { createBid, resetBids } from "@/features/bidSlice";
+import { createBid, getGigBids, resetBids } from "@/features/bidSlice";
 import type { AppDispatch, RootState } from "@/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,70 +31,26 @@ const GigDetailPage = () => {
     message: bidMessage,
   } = useSelector((state: RootState) => state.bids);
 
+  const { bids } = useSelector((state: RootState) => state.bids);
+
   useEffect(() => {
     if (id) {
       dispatch(getGigById(id));
+      dispatch(getGigBids(id));
     }
     return () => {
       dispatch(resetBids());
     };
   }, [dispatch, id]);
 
-  useEffect(() => {
-    if (bidSuccess) {
-      // Optional: Show toast or redirect
-      // For now, maybe just clear form
-      formik.resetForm();
-      // Refetch gig to update bids list
-      if (id) dispatch(getGigById(id));
-    }
-  }, [bidSuccess, id, dispatch]);
+  // ... (keep second useEffect)
 
-  const formik = useFormik({
-    initialValues: {
-      message: "",
-      price: "",
-    },
-    validationSchema: Yup.object({
-      message: Yup.string().required("Proposal message is required"),
-      price: Yup.number()
-        .required("Bid amount is required")
-        .positive("Must be positive"),
-    }),
-    onSubmit: (values) => {
-      if (id) {
-        dispatch(
-          createBid({
-            gigId: id,
-            message: values.message,
-            price: Number(values.price),
-          })
-        );
-      }
-    },
-  });
+  // ... (keep formik)
 
-  if (gigLoading) {
-    return <div className="text-center py-12">Loading gig details...</div>;
-  }
+  // ... (keep loading/error checks)
 
-  if (gigError || !currentGig) {
-    return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <h2 className="text-xl font-bold text-destructive">
-          Error loading gig
-        </h2>
-        <p className="text-muted-foreground">{gigMessage || "Gig not found"}</p>
-        <Button variant="outline" className="mt-4" asChild>
-          <Link to="/gigs">Back to Gigs</Link>
-        </Button>
-      </div>
-    );
-  }
-
-  const isOwner =
-    user?._id === currentGig.ownerId._id || user?._id === currentGig.ownerId;
-  const hasAlreadyBid = currentGig.bids?.some(
+  const isOwner = user?._id === currentGig.ownerId._id;
+  const hasAlreadyBid = bids.some(
     (bid: any) =>
       bid.freelancerId?._id === user?._id || bid.freelancerId === user?._id
   );
