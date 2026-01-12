@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/notifications";
+import API_URL from "@/config/API_URL";
 
 interface Notification {
   _id: string;
@@ -38,7 +37,9 @@ export const getUserNotifications = createAsyncThunk(
   "notifications/getAll",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get(API_URL, { withCredentials: true });
+      const response = await axios.get(`${API_URL}/notifications`, {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error: any) {
       const message =
@@ -58,7 +59,7 @@ export const markAsRead = createAsyncThunk(
   async (id: string, thunkAPI) => {
     try {
       const response = await axios.put(
-        `${API_URL}/${id}/read`,
+        `${API_URL}/notifications/${id}/read`,
         {},
         { withCredentials: true }
       );
@@ -81,7 +82,7 @@ export const markAllAsRead = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.put(
-        `${API_URL}/read-all`,
+        `${API_URL}/notifications/read-all`,
         {},
         { withCredentials: true }
       );
