@@ -24,10 +24,11 @@ const Navbar = () => {
           to="/"
           className="text-xl font-bold text-foreground flex items-center gap-2 hover:opacity-80 transition-opacity"
         >
-          <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center text-primary-foreground font-bold">
-            G
-          </div>
-          GigFlow
+          <img
+            src="https://cdn.brandure.online/gigflow-logo.webp"
+            alt="GigFlow"
+            className="h-8 w-auto"
+          />
         </Link>
 
         {/* Links */}

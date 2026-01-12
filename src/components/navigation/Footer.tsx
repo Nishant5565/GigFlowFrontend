@@ -10,8 +10,11 @@ const Footer = () => {
           {/* Brand */}
           <div className="flex flex-col">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-5 h-5 bg-primary rounded"></div>
-              <h3 className="text-lg font-bold text-foreground m-0">GigFlow</h3>
+              <img
+                src="https://cdn.brandure.online/gigflow-logo.webp"
+                alt="GigFlow"
+                className="h-8 w-auto"
+              />
             </Link>
             <p className="max-w-[280px] text-sm leading-relaxed text-muted-foreground">
               The modern marketplace for the future of work. Connecting talent
