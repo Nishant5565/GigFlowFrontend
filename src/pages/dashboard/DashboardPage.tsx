@@ -200,6 +200,7 @@ const DashboardPage = () => {
                     <TableHead>My Bid</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Date Applied</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -221,6 +222,13 @@ const DashboardPage = () => {
                       </TableCell>
                       <TableCell className="text-right text-muted-foreground">
                         {new Date(bid.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" asChild>
+                          <Link to={`/gigs/${(bid.gigId as any)?._id}`}>
+                            View Gig
+                          </Link>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}

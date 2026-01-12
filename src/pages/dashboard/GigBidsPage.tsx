@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, Link } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { getGigBids, hireFreelancer, resetBids } from "@/features/bidSlice";
 import { getGigById, updateGigStatus } from "@/features/gigSlice";
@@ -123,6 +123,9 @@ const GigBidsPage = () => {
 
         {currentGig && (
           <div className="flex items-center gap-3 bg-muted/30 p-2 rounded-lg border border-border/50">
+            <Button variant="outline" size="sm" asChild className="mr-2">
+              <Link to={`/gigs/${gigId}`}>View Gig</Link>
+            </Button>
             <span className="text-sm font-medium text-muted-foreground pl-2">
               Accepting Bids:
             </span>
@@ -213,14 +216,14 @@ const GigBidsPage = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
                   <div className="flex items-start gap-4">
                     <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                      {bid.freelancerId.name.charAt(0).toUpperCase()}
+                      {bid.freelancerId?.name?.charAt(0).toUpperCase() || "?"}
                     </div>
                     <div>
                       <h3 className="font-bold text-lg flex items-center gap-2">
-                        {bid.freelancerId.name}
+                        {bid.freelancerId?.name || "Unknown Freelancer"}
                       </h3>
                       <div className="text-sm text-muted-foreground">
-                        {bid.freelancerId.email}
+                        {bid.freelancerId?.email || "No email"}
                       </div>
                       <div className="text-xs text-muted-foreground mt-1">
                         Applied {new Date(bid.createdAt).toLocaleDateString()}
@@ -272,7 +275,8 @@ const GigBidsPage = () => {
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>
-                                Hire {bid.freelancerId.name}?
+                                Hire{" "}
+                                {bid.freelancerId?.name || "this freelancer"}?
                               </AlertDialogTitle>
                               <AlertDialogDescription>
                                 This action will mark this freelancer as hired

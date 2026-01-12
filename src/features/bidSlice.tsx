@@ -146,7 +146,6 @@ const bidSlice = createSlice({
       })
       .addCase(getGigBids.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = true;
         state.bids = action.payload;
       })
       .addCase(getGigBids.rejected, (state, action) => {

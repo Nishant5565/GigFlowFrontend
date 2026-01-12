@@ -70,7 +70,7 @@ const GigDetailPage = () => {
     if (bidSuccess) {
       formik.resetForm();
       if (id) {
-        // Re-fetch bids to update list (and hasAlreadyBid status)
+        // Re-fetch bids to update list (and userBid status)
         dispatch(getGigBids(id));
       }
     }
@@ -122,10 +122,10 @@ const GigDetailPage = () => {
   }
 
   const isOwner = user?._id === currentGig.ownerId._id;
-  // Safer check for existing bid
-  const hasAlreadyBid =
+  // Find existing bid by user
+  const userBid =
     Array.isArray(bids) &&
-    bids.some(
+    bids.find(
       (bid: any) =>
         bid.freelancerId?._id === user?._id || bid.freelancerId === user?._id
     );
@@ -210,27 +210,51 @@ const GigDetailPage = () => {
                   <Link to={`/dashboard`}>Go to Dashboard</Link>
                 </Button>
               </div>
-            ) : hasAlreadyBid ? (
-              <div className="p-6 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl text-center">
-                <CheckCircle className="h-10 w-10 text-blue-600 dark:text-blue-400 mx-auto mb-3" />
-                <h3 className="text-lg font-bold text-blue-900 dark:text-blue-300 mb-1">
-                  Proposal Submitted
-                </h3>
-                <p className="text-blue-700 dark:text-blue-400 font-medium mb-2">
-                  You have already placed a bid on this gig.
-                </p>
-                <p className="text-sm text-blue-600 dark:text-blue-500 mb-4 max-w-md mx-auto">
-                  You can track the status of your application in your
-                  dashboard. Good luck!
-                </p>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/50"
-                >
-                  <Link to="/dashboard">Go to Dashboard</Link>
-                </Button>
-              </div>
+            ) : userBid ? (
+              userBid.status === "hired" ? (
+                <div className="p-6 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl text-center">
+                  <div className="w-16 h-16 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">🎉</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-green-900 dark:text-green-300 mb-2">
+                    Congratulations!
+                  </h3>
+                  <p className="text-green-800 dark:text-green-200 font-semibold text-lg mb-2">
+                    You have been hired for this gig!
+                  </p>
+                  <p className="text-green-700 dark:text-green-400 mb-6 max-w-md mx-auto">
+                    The client has accepted your proposal. Please check your
+                    dashboard for further instructions.
+                  </p>
+                  <Button
+                    asChild
+                    className="bg-green-600 hover:bg-green-700 text-white shadow-md shadow-green-200 dark:shadow-none"
+                  >
+                    <Link to="/dashboard">Go to Dashboard</Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="p-6 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl text-center">
+                  <CheckCircle className="h-10 w-10 text-blue-600 dark:text-blue-400 mx-auto mb-3" />
+                  <h3 className="text-lg font-bold text-blue-900 dark:text-blue-300 mb-1">
+                    Proposal Submitted
+                  </h3>
+                  <p className="text-blue-700 dark:text-blue-400 font-medium mb-2">
+                    You have already placed a bid on this gig.
+                  </p>
+                  <p className="text-sm text-blue-600 dark:text-blue-500 mb-4 max-w-md mx-auto">
+                    You can track the status of your application in your
+                    dashboard. Good luck!
+                  </p>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-blue-300 text-blue-700 hover:bg-blue-100 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/50"
+                  >
+                    <Link to="/dashboard">Go to Dashboard</Link>
+                  </Button>
+                </div>
+              )
             ) : (
               <div className="max-w-2xl mx-auto">
                 <div className="text-center mb-8">

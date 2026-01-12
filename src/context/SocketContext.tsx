@@ -27,7 +27,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!user) {
       if (socket) {
-        console.log("Disconnecting socket (no user)...");
         socket.disconnect();
         setSocket(null);
         setIsConnected(false);
@@ -37,25 +36,21 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (socket?.connected) return;
 
-    console.log("Initializing Socket.io connection to", SOCKET_URL);
     const newSocket = io(SOCKET_URL, {
       transports: ["websocket"],
       withCredentials: true,
     });
 
     newSocket.on("connect", () => {
-      console.log("Socket connected:", newSocket.id);
       setIsConnected(true);
       newSocket.emit("join", user._id);
     });
 
     newSocket.on("connect_error", (err) => {
-      console.error("Socket connection error:", err);
       setIsConnected(false);
     });
 
     newSocket.on("disconnect", (reason) => {
-      console.log("Socket disconnected:", reason);
       setIsConnected(false);
     });
 
