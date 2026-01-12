@@ -5,6 +5,7 @@ import { getGigBids, hireFreelancer, resetBids } from "@/features/bidSlice";
 import { getGigById, updateGigStatus } from "@/features/gigSlice";
 import type { AppDispatch, RootState } from "@/store";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Check, Newspaper } from "lucide-react";
 import {
   AlertDialog,
@@ -78,8 +79,34 @@ const GigBidsPage = () => {
 
   if (bidsLoading)
     return (
-      <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="container mx-auto px-4 py-8 max-w-5xl min-h-[calc(100vh-200px)]">
+        <div className="mb-6 flex justify-between items-center">
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="mb-8">
+          <Skeleton className="h-8 w-64 mb-2" />
+          <Skeleton className="h-6 w-48" />
+        </div>
+        <div className="grid gap-6">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-4"
+            >
+              <div className="flex justify-between items-start gap-4">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-40" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                </div>
+                <Skeleton className="h-12 w-24 rounded-lg" />
+              </div>
+              <Skeleton className="h-16 w-full" />
+            </div>
+          ))}
+        </div>
       </div>
     );
 
@@ -152,7 +179,7 @@ const GigBidsPage = () => {
       {bids.length === 0 ? (
         <div className="bg-muted/30 border border-border border-dashed rounded-xl p-16 text-center">
           <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-           <Newspaper />
+            <Newspaper />
           </div>
           <h3 className="text-lg font-semibold mb-2">No bids received yet</h3>
           <p className="text-muted-foreground max-w-sm mx-auto">

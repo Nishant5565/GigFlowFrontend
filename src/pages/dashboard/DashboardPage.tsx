@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { getMyGigs } from "@/features/gigSlice";
@@ -94,8 +95,18 @@ const DashboardPage = () => {
         {/* My Posted Gigs Content */}
         <TabsContent value="posted-gigs">
           {isGigsLoading ? (
-            <div className="text-center py-12 text-muted-foreground">
-              Loading your gigs...
+            <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden p-6 space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between gap-4"
+                >
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-6 w-24 rounded-full" />
+                  <Skeleton className="h-8 w-20 rounded-md" />
+                </div>
+              ))}
             </div>
           ) : gigs.length === 0 ? (
             <div className="text-center py-12 border border-dashed border-border rounded-xl bg-muted/50">
@@ -156,8 +167,18 @@ const DashboardPage = () => {
         {/* My Applications Content */}
         <TabsContent value="my-applications">
           {isBidsLoading ? (
-            <div className="text-center py-12 text-muted-foreground">
-              Loading your applications...
+            <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden p-6 space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between gap-4"
+                >
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-6 w-24 rounded-full" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+              ))}
             </div>
           ) : bids.length === 0 ? (
             <div className="text-center py-12 border border-dashed border-border rounded-xl bg-muted/50">

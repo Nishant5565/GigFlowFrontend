@@ -1,3 +1,5 @@
+import { useDebounce } from "@/hooks/useDebounce";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
@@ -5,20 +7,22 @@ import { getAllGigs } from "@/features/gigSlice";
 import type { AppDispatch, RootState } from "@/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 const GigListPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { gigs, isLoading } = useSelector((state: RootState) => state.gigs);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   useEffect(() => {
-    dispatch(getAllGigs({}));
-  }, [dispatch]);
+    dispatch(getAllGigs({ search: debouncedSearchTerm }));
+  }, [dispatch, debouncedSearchTerm]);
 
+  // handleSearch is no longer needed as the effect handles it
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(getAllGigs({ search: searchTerm }));
+    // Optional: immediate search on submit if desired, but effect covers it
   };
 
   return (
@@ -32,22 +36,47 @@ const GigListPage = () => {
             Browse open opportunities and start working.
           </p>
         </div>
-        <form onSubmit={handleSearch} className="flex w-full md:w-auto gap-2">
+        <div className="relative w-full md:w-auto flex items-center gap-2">
           <Input
             placeholder="Search keywords..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:w-80"
+            className="w-full md:w-120 pr-8"
           />
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm("")}
+              className="absolute right-13 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
           <Button type="submit" size="icon">
             <Search className="h-4 w-4" />
           </Button>
-        </form>
+        </div>
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12 text-muted-foreground">
-          Loading gigs...
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              className="bg-card border border-border rounded-xl p-6 shadow-sm flex flex-col h-full space-y-4"
+            >
+              <div className="flex justify-between items-start">
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-5 w-16 rounded-full" />
+              </div>
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <div className="flex justify-between items-center mt-auto pt-4 border-t border-border">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-8 w-20" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
